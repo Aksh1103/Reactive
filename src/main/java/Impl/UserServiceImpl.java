@@ -2,6 +2,7 @@ package Impl;
 
 import exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import model.User;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -12,6 +13,7 @@ import service.UserService;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserServiceImpl  implements UserService {
 
     private final UserRepository  userRepository;
@@ -20,6 +22,7 @@ public class UserServiceImpl  implements UserService {
 
     @Override
     public Mono<User> createUser(User user) {
+        log.info("Creating new user with email: {}", user.getEmail());
         return userRepository.save(user);
     }
 
