@@ -15,4 +15,6 @@ public interface UserService {
     Mono<User> updateUser(Long id, User user);
 
     Mono<Void> deleteUser(Long id);
+
+    Flux<User> searchUsersByName(String name);
 }

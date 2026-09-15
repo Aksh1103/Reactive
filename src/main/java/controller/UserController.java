@@ -42,4 +42,8 @@ public class UserController {
         return userService.deleteUser(id)
                 .thenReturn(ResponseEntity.noContent().<Void>build());
     }
+    @GetMapping("/search")
+    public Flux<User> searchUsers(@RequestParam String name) {
+        return userService.searchUsersByName(name);
+    }
 }

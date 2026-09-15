@@ -50,4 +50,17 @@ public class UserServiceImpl  implements UserService {
                 .switchIfEmpty(Mono.error(new UserNotFoundException(id)))
                 .flatMap(userRepository::delete);
     }
+
+//    @Override
+//    public Flux<User> searchUsersByName(String name) {
+//        return null;
+//    }
+
+    @Override
+    public Flux<User> searchUsersByName(String name) {
+        return userRepository.findByNameContaining(name);
+    }
+
+
+
 }
