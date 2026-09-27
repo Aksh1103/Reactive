@@ -8,17 +8,16 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import repository.UserRepository;
+import service.UserCacheService;
 import service.UserService;
-
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserServiceImpl  implements UserService {
+public class UserServiceImpl implements UserService {
 
-    private final UserRepository  userRepository;
-
-
+    private final UserRepository userRepository;
+    private final UserCacheService userCacheService;
 
     @Override
     public Mono<User> createUser(User user) {
@@ -28,8 +27,15 @@ public class UserServiceImpl  implements UserService {
 
     @Override
     public Mono<User> getUserById(Long id) {
+        User cachedUser = userCacheService.getFromCache(id);
+
+        if (cachedUser != null) {
+            return Mono.just(cachedUser);
+        }
+
         return userRepository.findById(id)
-                .switchIfEmpty(Mono.error(new UserNotFoundException(id)));
+                .switchIfEmpty(Mono.error(new UserNotFoundException(id)))
+                .doOnNext(user -> userCacheService.putInCache(id, user));
     }
 
     @Override
@@ -45,25 +51,20 @@ public class UserServiceImpl  implements UserService {
                     existingUser.setName(user.getName());
                     existingUser.setEmail(user.getEmail());
                     return userRepository.save(existingUser);
-                });
+                })
+                .doOnSuccess(updatedUser -> userCacheService.putInCache(id, updatedUser));
     }
+
     @Override
     public Mono<Void> deleteUser(Long id) {
         return userRepository.findById(id)
                 .switchIfEmpty(Mono.error(new UserNotFoundException(id)))
-                .flatMap(userRepository::delete);
+                .flatMap(userRepository::delete)
+                .doOnSuccess(v -> userCacheService.evictFromCache(id));
     }
-
-//    @Override
-//    public Flux<User> searchUsersByName(String name) {
-//        return null;
-//    }
 
     @Override
     public Flux<User> searchUsersByName(String name) {
         return userRepository.findByNameContaining(name);
     }
-
-
-
 }
