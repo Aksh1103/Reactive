@@ -1,5 +1,7 @@
 package service;
 
+import dto.UserRequestDto;
+import dto.UserResponseDto;
 import model.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,4 +19,6 @@ public interface UserService {
     Mono<Void> deleteUser(Long id);
 
     Flux<User> searchUsersByName(String name);
+
+    Mono<UserResponseDto> createUser(UserRequestDto requestDto);
 }

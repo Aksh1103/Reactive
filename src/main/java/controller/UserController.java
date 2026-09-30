@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import service.UserService;
+import dto.UserRequestDto;
+import dto.UserResponseDto;
+
+import static reactor.netty.http.HttpConnectionLiveness.log;
 
 @RestController
 @RequestMapping("/api/users")
@@ -15,9 +19,11 @@ public class UserController {
 
     private  final UserService  userService;
 
+
     @PostMapping
-    public Mono<User> createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public Mono<UserResponseDto> createUser(@RequestBody UserRequestDto requestDto) {
+        log.info("Received request to create user: {}", requestDto.getEmail());
+        return userService.createUser(requestDto);
     }
 
     @GetMapping("/{id}")

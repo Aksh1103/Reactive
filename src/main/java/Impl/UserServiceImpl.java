@@ -10,6 +10,9 @@ import reactor.core.publisher.Mono;
 import repository.UserRepository;
 import service.UserCacheService;
 import service.UserService;
+import dto.UserMapper;
+import dto.UserRequestDto;
+import dto.UserResponseDto;
 
 @Service
 @AllArgsConstructor
@@ -18,11 +21,26 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserCacheService userCacheService;
+//
+//    @Override
+//    public Mono<User> createUser(User user) {
+//        log.info("Creating new user with email: {}", user.getEmail());
+//        return userRepository.save(user);
+//    }
+
+    @Override
+    public Mono<UserResponseDto> createUser(UserRequestDto requestDto) {
+        log.info("Creating new user with email: {}", requestDto.getEmail());
+        User user = UserMapper.toEntity(requestDto);
+        return userRepository.save(user)
+                .map(UserMapper::toResponseDto)
+                .doOnSuccess(response -> log.info("User created successfully with id: {}", response.getId()));
+    }
+
 
     @Override
     public Mono<User> createUser(User user) {
-        log.info("Creating new user with email: {}", user.getEmail());
-        return userRepository.save(user);
+        return null;
     }
 
     @Override
