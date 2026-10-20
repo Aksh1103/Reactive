@@ -21,12 +21,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserCacheService userCacheService;
-//
-//    @Override
-//    public Mono<User> createUser(User user) {
-//        log.info("Creating new user with email: {}", user.getEmail());
-//        return userRepository.save(user);
-//    }
 
     @Override
     public Mono<UserResponseDto> createUser(UserRequestDto requestDto) {
@@ -39,38 +33,37 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Mono<User> createUser(User user) {
-        return null;
-    }
-
-    @Override
-    public Mono<User> getUserById(Long id) {
+    public Mono<UserResponseDto> getUserById(Long id) {
         User cachedUser = userCacheService.getFromCache(id);
 
         if (cachedUser != null) {
-            return Mono.just(cachedUser);
+            return Mono.just(UserMapper.toResponseDto(cachedUser));
         }
 
         return userRepository.findById(id)
                 .switchIfEmpty(Mono.error(new UserNotFoundException(id)))
-                .doOnNext(user -> userCacheService.putInCache(id, user));
+                .doOnNext(user -> userCacheService.putInCache(id, user))
+                .map(UserMapper::toResponseDto);
+    }
+    @Override
+    public Flux<UserResponseDto> getAllUsers() {
+        log.info("Fetching all users");
+        return userRepository.findAll()
+                .map(UserMapper::toResponseDto);
     }
 
     @Override
-    public Flux<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    @Override
-    public Mono<User> updateUser(Long id, User user) {
+    public Mono<UserResponseDto> updateUser(Long id, UserRequestDto  requestDto) {
         return userRepository.findById(id)
                 .switchIfEmpty(Mono.error(new UserNotFoundException(id)))
                 .flatMap(existingUser -> {
-                    existingUser.setName(user.getName());
-                    existingUser.setEmail(user.getEmail());
+                    existingUser.setName(requestDto.getName());
+                    existingUser.setEmail(requestDto.getEmail());
                     return userRepository.save(existingUser);
                 })
-                .doOnSuccess(updatedUser -> userCacheService.putInCache(id, updatedUser));
+                //.doOnSuccess(updatedUser -> userCacheService.putInCache(id, updatedUser));
+                .doOnNext(updatedUser -> userCacheService.putInCache(id, updatedUser))
+                .map(UserMapper::toResponseDto);
     }
 
     @Override
