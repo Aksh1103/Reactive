@@ -27,19 +27,19 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<User>> getUserById(@PathVariable Long id) {
+    public Mono<ResponseEntity<UserResponseDto>> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok);
     }
 
     @GetMapping
-    public Flux<User> getAllUsers() {
+    public Flux<UserResponseDto> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<User>> updateUser(@PathVariable Long id, @RequestBody User user) {
-        return userService.updateUser(id, user)
+    public Mono<ResponseEntity<UserResponseDto>> updateUser(@PathVariable Long id, @RequestBody UserRequestDto  requestDto) {
+        return userService.updateUser(id, requestDto)
                 .map(ResponseEntity::ok);
     }
 
