@@ -1,0 +1,5 @@
+2026-10-24 10:34:24 [main] INFO  c.example.demo.DemoApplicationTests - Starting DemoApplicationTests using Java 17.0.7 with PID 1980 (started by delhi in C:\Users\delhi\OneDrive\Desktop\ReactiveJavaProject\demo\demo)
+2026-10-24 10:34:24 [main] INFO  c.example.demo.DemoApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2026-10-24 10:34:25 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data R2DBC repositories in DEFAULT mode.
+2026-10-24 10:34:25 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 452 ms. Found 1 R2DBC repository interface.
+2026-10-24 10:34:28 [main] INFO  c.example.demo.DemoApplicationTests - Started DemoApplicationTests in 5.626 seconds (process running for 9.001)
